@@ -7,9 +7,12 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fontSize = MediaQuery.of(context).size.width > 600 ? 15.0 : 13.0;
+    final width = MediaQuery.of(context).size.width;
+    final fontSize = width > 600 ? 15.0 : 13.0;
+    final cardHeight = width > 600 ? 330.0 : 250.0; // ✅ adaptive height
 
     return Container(
+      height: cardHeight,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -22,18 +25,17 @@ class ProductCard extends StatelessWidget {
           ),
         ],
       ),
-      clipBehavior: Clip.antiAlias, // ensures image fits the rounded corners
+      clipBehavior: Clip.antiAlias,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ================= IMAGE SECTION =================
+          // ===== IMAGE =====
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             child: Stack(
               children: [
                 AspectRatio(
-                  aspectRatio: 1, // keeps image square
+                  aspectRatio: 1,
                   child: Image.network(
                     product.thumbnail,
                     fit: BoxFit.cover,
@@ -60,55 +62,59 @@ class ProductCard extends StatelessWidget {
             ),
           ),
 
-          // ================= DETAILS SECTION =================
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Product Title
-                Text(
-                  product.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                    height: 1.3,
-                  ),
-                ),
-                const SizedBox(height: 6),
-
-                // Price and Rating Row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'GHS ${product.price.toStringAsFixed(2)}',
-                      style: TextStyle(
-                        fontSize: fontSize,
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          product.rating.toString(),
-                          style: TextStyle(
-                            fontSize: fontSize - 1,
-                            fontWeight: FontWeight.w500,
-                          ),
+          // ===== DETAILS =====
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: fontSize,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                          height: 1.3,
                         ),
-                        const SizedBox(width: 4),
-                        const Icon(Icons.star, color: Colors.amber, size: 16),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'GHS ${product.price.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              fontSize: fontSize,
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                product.rating.toString(),
+                                style: TextStyle(
+                                  fontSize: fontSize - 1,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              const Icon(Icons.star,
+                                  color: Colors.amber, size: 16),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ],

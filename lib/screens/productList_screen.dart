@@ -69,20 +69,25 @@ class _ProductListScreenState extends State<ProductListScreen> {
     final size = MediaQuery.of(context).size;
     final isTablet = size.width > 600;
 
+    final crossAxisCount = isTablet ? 3 : 2;
+    final aspectRatio = isTablet
+        ? 0.82
+        : 0.74; // ✅ adjusted for perfect balance
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: provider.isLoading
             ? const Center(child: CircularProgressIndicator())
             : Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
+                padding: EdgeInsets.symmetric(
+                  horizontal: size.width * 0.04,
+                  vertical: size.height * 0.015,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ===== Header Row =====
+                    // ===== Header =====
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -117,10 +122,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       child: GridView.builder(
                         itemCount: provider.products.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: isTablet ? 3 : 2,
+                          crossAxisCount: crossAxisCount,
                           mainAxisSpacing: 12,
                           crossAxisSpacing: 12,
-                          childAspectRatio: isTablet ? 0.8 : 0.72,
+                          childAspectRatio: aspectRatio,
                         ),
                         itemBuilder: (context, index) {
                           final product = provider.products[index];
@@ -135,7 +140,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
     );
   }
 
-  // ===== Outlined Button Builder =====
   Widget _buildOutlinedButton({
     required String label,
     required IconData icon,
@@ -145,7 +149,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        side: const BorderSide(color: Color(0xFF007F5F)), // subtle green border
+        side: const BorderSide(color: Color(0xFF007F5F)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
       ),
       child: Row(

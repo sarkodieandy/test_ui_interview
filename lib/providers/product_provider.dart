@@ -1,24 +1,33 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:test/services/api_service.dart';
 import '../models/product_model.dart';
-import '../services/api_service.dart';
 
 class ProductProvider extends ChangeNotifier {
+  final ProductService _service = ProductService();
+
   List<Product> _products = [];
-  bool _isLoading = false;
+  bool isLoading = false;
 
   List<Product> get products => _products;
-  bool get isLoading => _isLoading;
 
   Future<void> fetchProducts() async {
-    _isLoading = true;
+    isLoading = true;
     notifyListeners();
 
     try {
-      _products = await ApiService.fetchProducts();
+      _products = await _service.fetchProducts();
     } catch (e) {
-      if (kDebugMode) print('Error fetching products: $e');
+      debugPrint('Error fetching products: $e');
     } finally {
-      _isLoading = false;
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void toggleFavorite(int id) {
+    final index = _products.indexWhere((p) => p.id == id);
+    if (index != -1) {
+      _products[index].isFavorite = !_products[index].isFavorite;
       notifyListeners();
     }
   }

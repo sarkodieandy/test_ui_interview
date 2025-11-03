@@ -27,13 +27,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Wrap(
           children: [
-            const Text(
-              "Filter by:",
-              style: TextStyle(fontWeight: FontWeight.bold),
+            const Text("Filter by:", style: TextStyle(fontWeight: FontWeight.bold)),
+            DropdownButton<String>(
+              value: "All",
+              items: const [
+                DropdownMenuItem(value: "All", child: Text("All")),
+                DropdownMenuItem(value: "Trending", child: Text("Trending")),
+                DropdownMenuItem(value: "Top Rated", child: Text("Top Rated")),
+              ],
+              onChanged: (value) => Navigator.pop(context),
             ),
-            ListTile(title: const Text("Price below 100"), onTap: () {}),
-            ListTile(title: const Text("Price above 100"), onTap: () {}),
-            ListTile(title: const Text("Rating 4.5+"), onTap: () {}),
           ],
         ),
       ),
@@ -50,10 +53,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Wrap(
           children: [
-            const Text(
-              "Sort by:",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+            const Text("Sort by:", style: TextStyle(fontWeight: FontWeight.bold)),
             ListTile(title: const Text("Price: Low to High"), onTap: () {}),
             ListTile(title: const Text("Price: High to Low"), onTap: () {}),
             ListTile(title: const Text("Rating: High to Low"), onTap: () {}),
@@ -69,25 +69,18 @@ class _ProductListScreenState extends State<ProductListScreen> {
     final size = MediaQuery.of(context).size;
     final isTablet = size.width > 600;
 
-    final crossAxisCount = isTablet ? 3 : 2;
-    final aspectRatio = isTablet
-        ? 0.82
-        : 0.74; // ✅ adjusted for perfect balance
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: provider.isLoading
             ? const Center(child: CircularProgressIndicator())
             : Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: size.width * 0.04,
-                  vertical: size.height * 0.015,
-                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ===== Header =====
+                    // Header Row
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -117,15 +110,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // ===== Product Grid =====
+                    // Product Grid
                     Expanded(
                       child: GridView.builder(
                         itemCount: provider.products.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: crossAxisCount,
+                        gridDelegate:
+                            SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: isTablet ? 3 : 2,
                           mainAxisSpacing: 12,
                           crossAxisSpacing: 12,
-                          childAspectRatio: aspectRatio,
+                          childAspectRatio: isTablet ? 0.75 : 0.68,
                         ),
                         itemBuilder: (context, index) {
                           final product = provider.products[index];
